@@ -6,7 +6,7 @@
 #
 Name     : libevent
 Version  : 2.1.12.stable
-Release  : 33
+Release  : 34
 URL      : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
 Source0  : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
 Source1  : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz.asc
