@@ -6,7 +6,7 @@
 #
 Name     : libevent
 Version  : 2.1.12.stable
-Release  : 34
+Release  : 35
 URL      : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
 Source0  : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
 Source1  : https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz.asc
@@ -105,20 +105,20 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1595266258
+export SOURCE_DATE_EPOCH=1664934122
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -fstack-protector-strong -fzero-call-used-regs=used "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 -fstack-protector-strong -fzero-call-used-regs=used "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 -fstack-protector-strong -fzero-call-used-regs=used "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 -fstack-protector-strong -fzero-call-used-regs=used "
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
 %configure --disable-static --disable-libevent-regress
 make  %{?_smp_mflags}
 
 pushd ../build32/
-export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig:/usr/share/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
@@ -131,22 +131,28 @@ export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
+make %{?_smp_mflags} check
 cd ../build32;
-make VERBOSE=1 V=1 %{?_smp_mflags} check || :
+make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1595266258
+export SOURCE_DATE_EPOCH=1664934122
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libevent
-cp %{_builddir}/libevent-2.1.12-stable/LICENSE %{buildroot}/usr/share/package-licenses/libevent/0f375374b877550ade2e001905a1f9c9b7128714
-cp %{_builddir}/libevent-2.1.12-stable/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/libevent/cc31ae51223e291f3f7389a4c96b2cf4c1e62757
-cp %{_builddir}/libevent-2.1.12-stable/cmake/Copyright.txt %{buildroot}/usr/share/package-licenses/libevent/b7708e46727dc00ced77b6421d1f4b4e4045c12d
+cp %{_builddir}/libevent-2.1.12-stable/LICENSE %{buildroot}/usr/share/package-licenses/libevent/0f375374b877550ade2e001905a1f9c9b7128714 || :
+cp %{_builddir}/libevent-2.1.12-stable/cmake/COPYING-CMAKE-SCRIPTS %{buildroot}/usr/share/package-licenses/libevent/cc31ae51223e291f3f7389a4c96b2cf4c1e62757 || :
+cp %{_builddir}/libevent-2.1.12-stable/cmake/Copyright.txt %{buildroot}/usr/share/package-licenses/libevent/b7708e46727dc00ced77b6421d1f4b4e4045c12d || :
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
 then
 pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+if [ -d %{buildroot}/usr/share/pkgconfig ]
+then
+pushd %{buildroot}/usr/share/pkgconfig
 for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
